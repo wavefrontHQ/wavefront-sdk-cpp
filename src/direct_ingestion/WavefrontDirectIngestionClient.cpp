@@ -1,31 +1,28 @@
 #include <iostream>
 #include <algorithm>
 
-#include "direct_ingestion/DirectIngestionClient.h"
+#include "direct_ingestion/WavefrontDirectIngestionClient.h"
 #include "common/Serializer.h"
+#include "common/Constants.h"
 
 namespace wavefront {
-    const static int BAD_REQUEST = 400;
 
-    // Use those formats to send metric/histogram/tracing data to Wavefront
-    const static std::string WAVEFRONT_METRIC_FORMAT = "wavefront";
-    const static std::string WAVEFRONT_HISTOGRAM_FORMAT = "histogram";
-    const static std::string WAVEFRONT_TRACING_SPAN_FORMAT = "trace";
-
-    DirectIngestionClient::DirectIngestionClient(DirectIngestionClient::Builder *builder) : maxQueueSize(
+    WavefrontDirectIngestionClient::WavefrontDirectIngestionClient(WavefrontDirectIngestionClient::Builder *builder)
+            : maxQueueSize(
             builder->maxQueueSize), batchSize(builder->batchSize), flushIntervalSeconds(builder->flushIntervalSeconds),
-                                                                                            service(builder->serverName,
-                                                                                                    builder->token) {
+              service(builder->serverName,
+                      builder->token) {
     }
 
-    int DirectIngestionClient::getFailureCount() {
+    int WavefrontDirectIngestionClient::getFailureCount() {
         return failures.load();
     }
 
-    void DirectIngestionClient::sendDistribution(const std::string &name, std::list<std::pair<double, int>> centroids,
-                                                 std::set<wavefront::HistogramGranularity> histogramGranularities,
-                                                 long timestamp, const std::string &source,
-                                                 std::map<std::string, std::string> tags) {
+    void WavefrontDirectIngestionClient::sendDistribution(const std::string &name,
+                                                          std::list<std::pair<double, int>> centroids,
+                                                          std::set<wavefront::HistogramGranularity> histogramGranularities,
+                                                          long timestamp, const std::string &source,
+                                                          std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::histogramToLineData(name, centroids, histogramGranularities, timestamp,
                                                                    (source.empty() ? defaultSource : source), tags);
@@ -42,8 +39,9 @@ namespace wavefront {
         }
     }
 
-    void DirectIngestionClient::sendMetric(const std::string &name, double value, long timestamp,
-                                           const std::string &source, std::map<std::string, std::string> tags) {
+    void WavefrontDirectIngestionClient::sendMetric(const std::string &name, double value, long timestamp,
+                                                    const std::string &source,
+                                                    std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::metricsToLineData(name, value, timestamp,
                                                                  (source.empty() ? defaultSource : source), tags);
@@ -60,11 +58,11 @@ namespace wavefront {
         }
     }
 
-    void DirectIngestionClient::sendSpan(const std::string &name, long startMillis, long durationMillis,
-                                         boost::uuids::uuid traceId, boost::uuids::uuid spanId,
-                                         const std::string &source, std::list<boost::uuids::uuid> parents,
-                                         std::list<boost::uuids::uuid> followsFrom,
-                                         std::map<std::string, std::string> tags) {
+    void WavefrontDirectIngestionClient::sendSpan(const std::string &name, long startMillis, long durationMillis,
+                                                  boost::uuids::uuid traceId, boost::uuids::uuid spanId,
+                                                  const std::string &source, std::list<boost::uuids::uuid> parents,
+                                                  std::list<boost::uuids::uuid> followsFrom,
+                                                  std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::spanToLineData(name, startMillis, durationMillis, traceId, spanId,
                                                               (source.empty() ? defaultSource : source), parents,
@@ -82,7 +80,7 @@ namespace wavefront {
         }
     }
 
-    void DirectIngestionClient::internalFlush(std::queue<std::string> &buffer, const std::string &format) {
+    void WavefrontDirectIngestionClient::internalFlush(std::queue<std::string> &buffer, const std::string &format) {
         if (buffer.empty())
             return;
         // to decrease contention, using copy buffer
@@ -98,7 +96,8 @@ namespace wavefront {
 
         cpr::Response response = service.report(format, copy_buffer);
         // report error
-        if (response.status_code >= BAD_REQUEST) {
+        if (response.status_code != static_cast<int>(constant::StatusCode::OK) &&
+            response.status_code != static_cast<int>(constant::StatusCode::ACCEPTED)) {
             failures.fetch_add(1);
             // add back if report failed
             mutex.lock();
@@ -108,31 +107,34 @@ namespace wavefront {
             mutex.unlock();
             std::cerr << "Error reporting points, respStatus = " + response.error.message << std::endl;
         } else {
-            std::cout << "report points succeed" << std::endl;
+            std::cout << "report points succeed: " << response.status_code << std::endl;
         }
     }
 
-    void DirectIngestionClient::flush() {
-        internalFlush(metricsBuffer, WAVEFRONT_METRIC_FORMAT);
-        internalFlush(histogramBuffer, WAVEFRONT_HISTOGRAM_FORMAT);
-        internalFlush(tracingBuffer, WAVEFRONT_TRACING_SPAN_FORMAT);
+    void WavefrontDirectIngestionClient::flush() {
+        internalFlush(metricsBuffer, constant::WAVEFRONT_METRIC_FORMAT);
+        internalFlush(histogramBuffer, constant::WAVEFRONT_HISTOGRAM_FORMAT);
+        internalFlush(tracingBuffer, constant::WAVEFRONT_TRACING_SPAN_FORMAT);
     }
 
-    void DirectIngestionClient::flushTask() {
-        while (true) {
-            std::cout << "inside flush()" << std::endl;
+    void WavefrontDirectIngestionClient::flushTask() {
+        while (is_running) {
             std::this_thread::sleep_for(std::chrono::seconds(flushIntervalSeconds));
             flush();
+            std::cout << "done flush()" << std::endl;
         }
     }
 
-    void DirectIngestionClient::start() {
-        t = std::thread(&DirectIngestionClient::flushTask, this);
+    void WavefrontDirectIngestionClient::start() {
+        // start flushing thread
+        is_running.store(true);
+        t = std::thread(&WavefrontDirectIngestionClient::flushTask, this);
     }
 
-    void DirectIngestionClient::close() {
+    void WavefrontDirectIngestionClient::close() {
         // Flush before closing
         flush();
+        is_running.store(false);
         t.join();
     }
 }

@@ -5,7 +5,7 @@
 #include "direct_ingestion/DirectIngesterService.h"
 
 namespace wavefront {
-    class DirectIngestionClient : public WavefrontSender {
+    class WavefrontDirectIngestionClient : public WavefrontSender {
     public:
         // nested class for client builder
         struct Builder {
@@ -27,8 +27,8 @@ namespace wavefront {
                 return *this;
             }
 
-            DirectIngestionClient *build() {
-                return new DirectIngestionClient(this);
+            WavefrontDirectIngestionClient *build() {
+                return new WavefrontDirectIngestionClient(this);
             }
 
             // Required parameters
@@ -65,7 +65,7 @@ namespace wavefront {
         void start();
 
     private:
-        DirectIngestionClient(Builder *builder);
+        WavefrontDirectIngestionClient(Builder *builder);
 
         void flushTask();
 
@@ -88,5 +88,6 @@ namespace wavefront {
         DirectIngesterService service;
         // thread dedicated for flushing task
         std::thread t;
+        std::atomic<bool> is_running;
     };
 }

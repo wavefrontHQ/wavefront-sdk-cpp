@@ -5,18 +5,18 @@ add_library(wavefront-sdk
         include/common/Socket.h
         proxy/ProxyConnectionHandler.cpp
         include/proxy/ProxyConnectionHandler.h
-        include/proxy/ProxyClient.h
+        include/proxy/WavefrontProxyClient.h
         include/common/HistogramGranularity.h
-        proxy/ProxyClient.cpp
+        proxy/WavefrontProxyClient.cpp
         include/common/Serializer.h
         include/direct_ingestion/DirectIngesterService.h
         direct_ingestion/DirectIngesterService.cpp
-        direct_ingestion/DirectIngestionClient.cpp
-        include/direct_ingestion/DirectIngestionClient.h
+        direct_ingestion/WavefrontDirectIngestionClient.cpp
+        include/direct_ingestion/WavefrontDirectIngestionClient.h
         include/common/WavefrontSender.h
 
         # cpr
-        $<TARGET_OBJECTS:cpr>)
+        $<TARGET_OBJECTS:cpr> include/common/Constants.h)
 
 target_link_libraries(wavefront-sdk PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(wavefront-sdk PRIVATE ${CURL_LIBRARIES})

@@ -1,10 +1,10 @@
-#include "proxy/ProxyClient.h"
+#include "proxy/WavefrontProxyClient.h"
 #include "common/Serializer.h"
 
 #include <iostream>
-namespace wavefront {
 
-    ProxyClient::ProxyClient(ProxyClient::Builder *builder) {
+namespace wavefront {
+    WavefrontProxyClient::WavefrontProxyClient(WavefrontProxyClient::Builder *builder) {
         if (builder->distributionPort != 0) {
             distributionHandler = std::unique_ptr<ProxyConnectionHandler>(
                     new ProxyConnectionHandler(builder->hostName, builder->distributionPort));
@@ -22,11 +22,9 @@ namespace wavefront {
                     new ProxyConnectionHandler(builder->hostName, builder->tracingPort));
             tracingHandler->connect();
         }
-        // hardcoded
-        defaultSource = "localhost";
     }
 
-    int ProxyClient::getFailureCount() {
+    int WavefrontProxyClient::getFailureCount() {
         int result = 0;
         if (metricHandler != nullptr) {
             result += metricHandler->getFailureCount();
@@ -43,7 +41,7 @@ namespace wavefront {
         return result;
     }
 
-    void ProxyClient::close() {
+    void WavefrontProxyClient::close() {
         if (metricHandler != nullptr) {
             try {
                 metricHandler->close();
@@ -72,8 +70,9 @@ namespace wavefront {
         }
     }
 
-    void ProxyClient::sendMetric(const std::string &name, double value, long timestamp, const std::string &source,
-                                 std::map<std::string, std::string> tags) {
+    void
+    WavefrontProxyClient::sendMetric(const std::string &name, double value, long timestamp, const std::string &source,
+                                     std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::metricsToLineData(name, value, timestamp,
                                                                  (source.empty() ? defaultSource : source), tags);
@@ -87,9 +86,10 @@ namespace wavefront {
         }
     }
 
-    void ProxyClient::sendDistribution(const std::string &name, std::list<std::pair<double, int>> centroids,
-                                       std::set<wavefront::HistogramGranularity> histogramGranularities, long timestamp,
-                                       const std::string &source, std::map<std::string, std::string> tags) {
+    void WavefrontProxyClient::sendDistribution(const std::string &name, std::list<std::pair<double, int>> centroids,
+                                                std::set<wavefront::HistogramGranularity> histogramGranularities,
+                                                long timestamp,
+                                                const std::string &source, std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::histogramToLineData(name, centroids, histogramGranularities, timestamp,
                                                                    (source.empty() ? defaultSource : source), tags);
@@ -103,10 +103,12 @@ namespace wavefront {
         }
     }
 
-    void ProxyClient::sendSpan(const std::string &name, long startMillis, long durationMillis,
-                               boost::uuids::uuid traceId, boost::uuids::uuid spanId, const std::string &source,
-                               std::list<boost::uuids::uuid> parents, std::list<boost::uuids::uuid> followsFrom,
-                               std::map<std::string, std::string> tags) {
+    void WavefrontProxyClient::sendSpan(const std::string &name, long startMillis, long durationMillis,
+                                        boost::uuids::uuid traceId, boost::uuids::uuid spanId,
+                                        const std::string &source,
+                                        std::list<boost::uuids::uuid> parents,
+                                        std::list<boost::uuids::uuid> followsFrom,
+                                        std::map<std::string, std::string> tags) {
         try {
             std::string lineData = Serializer::spanToLineData(name, startMillis, durationMillis, traceId, spanId,
                                                               (source.empty() ? defaultSource : source), parents,

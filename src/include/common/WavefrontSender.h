@@ -31,7 +31,7 @@ namespace wavefront {
                    std::map<std::string, std::string> tags = {{}}) = 0;
 
         /**
-        *
+        * Sends the given histogram to Wavefront
         * @param name                       The name of the histogram distribution. Spaces are replaced
         *                                   with '-' (dashes) and quotes will be automatically escaped.
         * @param centroids                  The distribution of histogram points to be sent.

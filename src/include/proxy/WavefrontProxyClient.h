@@ -4,7 +4,7 @@
 #include "common/WavefrontSender.h"
 
 namespace wavefront {
-    class ProxyClient : public WavefrontSender {
+    class WavefrontProxyClient : public WavefrontSender {
     public:
         // nested class for client builder
         struct Builder {
@@ -26,8 +26,8 @@ namespace wavefront {
                 return *this;
             }
 
-            ProxyClient *build() {
-                return new ProxyClient(this);
+            WavefrontProxyClient *build() {
+                return new WavefrontProxyClient(this);
             }
 
             std::string hostName;
@@ -55,7 +55,7 @@ namespace wavefront {
         void close();
 
     private:
-        ProxyClient(Builder *builder);
+        WavefrontProxyClient(Builder *builder);
 
         std::unique_ptr<ProxyConnectionHandler> metricHandler = nullptr;
         std::unique_ptr<ProxyConnectionHandler> distributionHandler = nullptr;

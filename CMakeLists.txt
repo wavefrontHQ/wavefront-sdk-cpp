@@ -15,7 +15,7 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)
 
 # ---[ Dependency:: find Boost
-find_package(Boost 1.52 REQUIRED COMPONENTS iostreams filesystem system)
+find_package(Boost 1.52 REQUIRED COMPONENTS iostreams filesystem system log)
 include_directories(${Boost_INCLUDE_DIR})
 
 # ---[ Dependency:: find cpr/curl
@@ -29,7 +29,7 @@ endif ()
 # ---[ Includes
 set(WAVEFRONT_SDK_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
 include_directories(${WAVEFRONT_SDK_INCLUDE_DIR})
-include_directories(wavefront-sdk ${CPR_INCLUDE_DIR} ${CURL_INCLUDE_DIRS})
+include_directories(${CPR_INCLUDE_DIR} ${CURL_INCLUDE_DIRS})
 include_directories(BEFORE src) # This is needed for gtest.
 
 # ---[ Subdirectories
