@@ -4,9 +4,10 @@
 #include <exception>         // For exception class
 
 namespace wavefront {
-/**
- *   Signals a problem with the execution of a socket call.
- */
+    /**
+     *   Signals a problem with the execution of a socket call.
+     *   @author Mengran Wang (mengranw@vmware.com)
+     */
     class SocketException : public std::exception {
     public:
         /**

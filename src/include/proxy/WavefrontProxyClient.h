@@ -4,6 +4,10 @@
 #include "common/WavefrontSender.h"
 
 namespace wavefront {
+    /**
+    * WavefrontProxyClient that sends data directly via TCP to the Wavefront Proxy Agent.
+    * @author Mengran Wang (mengranw@vmware.com)
+    */
     class WavefrontProxyClient : public WavefrontSender {
     public:
         // nested class for client builder

@@ -4,6 +4,11 @@
 #include "common/Socket.h"
 
 namespace wavefront {
+    /**
+    * Connection Handler class for sending data to a Wavefront proxy listening on a given port.
+    *
+    * @author Mengran Wang (mengranw@vmware.com)
+    */
     class ProxyConnectionHandler {
     public:
         ProxyConnectionHandler(std::string &hostName, unsigned short port);

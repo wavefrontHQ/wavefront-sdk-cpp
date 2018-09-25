@@ -12,6 +12,11 @@
 #include "common/HistogramGranularity.h"
 
 namespace wavefront {
+    /**
+    * Common Util methods to serialize data point
+    *
+    * @author Mengran Wang(mengranw@vmware.com)
+    */
     static const std::string quote = "\"";
 
     class Serializer {

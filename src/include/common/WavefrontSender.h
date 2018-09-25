@@ -8,6 +8,11 @@
 #include "common/HistogramGranularity.h"
 
 namespace wavefront {
+    /**
+    * An abstract WavefrontSender class that contains various sending methods along with flushing and closing logic
+    *
+    * @author Mengran Wang (mengranw@vmware.com)
+    */
     class WavefrontSender {
     public:
         WavefrontSender() {}

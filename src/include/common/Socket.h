@@ -7,6 +7,7 @@
 namespace wavefront {
     /**
     *   Base class representing basic communication endpoint
+    *   @author Mengran Wang (mengranw@vmware.com)
     */
     class Socket {
     public:

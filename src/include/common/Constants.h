@@ -3,6 +3,11 @@
 #include <string>
 
 namespace wavefront {
+    /**
+    * file to define all cpp-sdk constants
+    *
+    * @author Mengran Wang (mengranw@vmware.com).
+    */
     namespace constant {
         /**
         * Use this format to send metric data to Wavefront
@@ -29,6 +34,7 @@ namespace wavefront {
          */
         const static std::string DELTA_PREFIX_2 = "\u0394";
 
+        // status code for http response
         enum class StatusCode {
             OK = 200,
             CREATED = 201,

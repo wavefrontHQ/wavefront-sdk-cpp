@@ -5,6 +5,11 @@
 #include "direct_ingestion/DirectIngesterService.h"
 
 namespace wavefront {
+    /**
+    *  Wavefront direct ingestion client that sends data directly to Wavefront cluster via the direct ingestion API.
+    *
+    *  @author Mengran Wang (mengranw@vmware.com)
+    */
     class WavefrontDirectIngestionClient : public WavefrontSender {
     public:
         // nested class for client builder

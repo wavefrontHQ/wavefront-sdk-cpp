@@ -1,4 +1,3 @@
-bazel-*
 cmake-build-*/
 build/
 .idea/
