@@ -19,7 +19,8 @@ namespace wavefront {
         session.SetUrl(cpr::Url{url});
         session.SetHeader(cpr::Header{{"Content-Type",     CONTENT_TYPE},
                                       {"Content-Encoding", "gzip"},
-                                      {"Authorization",    "Bearer " + token}});
+                                      {"Authorization",    "Bearer " + token},
+                                      {"Connection",       "keep-alive"}});
         session.SetTimeout(cpr::Timeout{TIMEOUT});
         session.SetBody(cpr::Body{getCompressedString(targets)});
 
@@ -42,7 +43,6 @@ namespace wavefront {
 
         return result;
     }
-
 
 
 }

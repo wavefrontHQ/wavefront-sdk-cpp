@@ -4,6 +4,7 @@
 #include "direct_ingestion/WavefrontDirectIngestionClient.h"
 #include "common/Serializer.h"
 #include "common/Constants.h"
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace wavefront {
 
@@ -58,6 +59,15 @@ namespace wavefront {
         }
     }
 
+    void WavefrontDirectIngestionClient::sendDeltaCounter(std::string &name, double value,
+                                                          const std::string &source,
+                                                          std::map<std::string, std::string> tags) {
+        if (!boost::starts_with(name, constant::DELTA_PREFIX) && !boost::starts_with(name, constant::DELTA_PREFIX_2)) {
+            name += constant::DELTA_PREFIX;
+        }
+        sendMetric(name, value, -1, source, tags);
+    }
+
     void WavefrontDirectIngestionClient::sendSpan(const std::string &name, long startMillis, long durationMillis,
                                                   boost::uuids::uuid traceId, boost::uuids::uuid spanId,
                                                   const std::string &source, std::list<boost::uuids::uuid> parents,
@@ -105,7 +115,8 @@ namespace wavefront {
                 buffer.push(element);
             }
             mutex.unlock();
-            std::cerr << "Error reporting points, respStatus = " + response.error.message << std::endl;
+            std::cerr << "Error reporting points, respStatus = " + std::to_string(response.status_code) +
+                         " [" + response.error.message + "] " << std::endl;
         } else {
             std::cout << "report points succeed: " << response.status_code << std::endl;
         }

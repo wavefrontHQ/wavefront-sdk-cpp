@@ -1,7 +1,9 @@
 #include "proxy/WavefrontProxyClient.h"
 #include "common/Serializer.h"
+#include "common/Constants.h"
 
 #include <iostream>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace wavefront {
     WavefrontProxyClient::WavefrontProxyClient(WavefrontProxyClient::Builder *builder) {
@@ -84,6 +86,14 @@ namespace wavefront {
             metricHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
         }
+    }
+
+    void WavefrontProxyClient::sendDeltaCounter(std::string &name, double value, const std::string &source,
+                                                std::map<std::string, std::string> tags) {
+        if (!boost::starts_with(name, constant::DELTA_PREFIX) && !boost::starts_with(name, constant::DELTA_PREFIX_2)) {
+            name += constant::DELTA_PREFIX;
+        }
+        sendMetric(name, value, -1, source, tags);
     }
 
     void WavefrontProxyClient::sendDistribution(const std::string &name, std::list<std::pair<double, int>> centroids,

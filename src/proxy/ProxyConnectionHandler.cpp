@@ -3,9 +3,10 @@
 #include <memory>
 
 namespace wavefront {
-    ProxyConnectionHandler::ProxyConnectionHandler(std::string &hostName, unsigned short port) : hostName(hostName),
-                                                                                                 port(port),
-                                                                                                 socket(new CommunicatingSocket()) {
+    ProxyConnectionHandler::ProxyConnectionHandler(std::string &hostName, unsigned short port)
+            : hostName(hostName),
+              port(port),
+              socket(new CommunicatingSocket()) {
     }
 
     ProxyConnectionHandler::~ProxyConnectionHandler() {
@@ -33,7 +34,7 @@ namespace wavefront {
         std::lock_guard<std::mutex> lock{mutex};
         try {
             socket->send(lineData.c_str(), lineData.length());
-        }catch (SocketException e){
+        } catch (SocketException e) {
             throw e;
         }
     }

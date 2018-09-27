@@ -43,6 +43,9 @@ namespace wavefront {
         void sendMetric(const std::string &name, double value, long timestamp = -1, const std::string &source = "",
                         std::map<std::string, std::string> tags = {{}}) override;
 
+        void sendDeltaCounter(std::string &name, double value, const std::string &source = "",
+                              std::map<std::string, std::string> tags = {{}}) override;
+
         void sendDistribution(const std::string &name, std::list<std::pair<double, int>> centroids,
                               std::set<HistogramGranularity> histogramGranularities, long timestamp = -1,
                               const std::string &source = "",
