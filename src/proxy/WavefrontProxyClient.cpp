@@ -75,6 +75,8 @@ namespace wavefront {
     void
     WavefrontProxyClient::sendMetric(const std::string &name, double value, long timestamp, const std::string &source,
                                      std::map<std::string, std::string> tags) {
+        if (metricHandler == nullptr)
+            return;
         try {
             std::string lineData = Serializer::metricsToLineData(name, value, timestamp,
                                                                  (source.empty() ? defaultSource : source), tags);
@@ -100,6 +102,8 @@ namespace wavefront {
                                                 std::set<wavefront::HistogramGranularity> histogramGranularities,
                                                 long timestamp,
                                                 const std::string &source, std::map<std::string, std::string> tags) {
+        if (distributionHandler == nullptr)
+            return;
         try {
             std::string lineData = Serializer::histogramToLineData(name, centroids, histogramGranularities, timestamp,
                                                                    (source.empty() ? defaultSource : source), tags);
@@ -119,6 +123,9 @@ namespace wavefront {
                                         std::list<boost::uuids::uuid> parents,
                                         std::list<boost::uuids::uuid> followsFrom,
                                         std::map<std::string, std::string> tags) {
+        if (tracingHandler == nullptr)
+            return;
+
         try {
             std::string lineData = Serializer::spanToLineData(name, startMillis, durationMillis, traceId, spanId,
                                                               (source.empty() ? defaultSource : source), parents,

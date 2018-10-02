@@ -1,8 +1,8 @@
 #pragma once
 
 #include <queue>
-#include "common/WavefrontSender.h"
-#include "direct_ingestion/DirectIngesterService.h"
+#include "../common/WavefrontSender.h"
+#include "DirectIngesterService.h"
 
 namespace wavefront {
     /**

@@ -1,34 +1,28 @@
 #pragma once
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/time_facet.hpp>
+#include <chrono>
 
 namespace wavefront {
     namespace Utils {
-
-        inline boost::posix_time::time_duration get_duration_from_epoch() {
-            boost::posix_time::ptime time_t_epoch(boost::gregorian::date(1970, 1, 1));
-            boost::posix_time::ptime now =
-                    boost::posix_time::microsec_clock::local_time();
-            return (now - time_t_epoch);
-        }
+        // clock std::ratio<1, 1000000000> ---> nanoseconds level
+        //Elapsed times for it events are measured internally in nanoseconds, its precision and accuracy vary depending on
+        // operating system and hardware.
+        typedef std::chrono::high_resolution_clock Clock;
 
         inline long get_millis_from_epoch() {
-            return get_duration_from_epoch().total_milliseconds();
+            auto now = std::chrono::system_clock::now();
+            auto since_epoch = now.time_since_epoch(); // get the duration since epoch
+
+            int64_t millis = std::chrono::duration_cast<std::chrono::milliseconds>(since_epoch).count();
+            return millis;
         }
 
         inline long get_seconds_from_epoch() {
-            return get_duration_from_epoch().total_seconds();
-        }
+            auto now = std::chrono::system_clock::now();
+            auto since_epoch = now.time_since_epoch(); // get the duration since epoch
 
-        inline std::string utc_timestamp(const std::locale &current_locale) {
-            std::ostringstream ss;
-            // assumes std::cout's locale has been set appropriately for the entire app
-            boost::posix_time::time_facet *t_facet(new boost::posix_time::time_facet());
-            t_facet->time_duration_format("%d-%M-%y %H:%M:%S%F %Q");
-            ss.imbue(std::locale(current_locale, t_facet));
-            ss << boost::posix_time::microsec_clock::universal_time();
-            return ss.str();
+            int64_t seconds = std::chrono::duration_cast<std::chrono::seconds>(since_epoch).count();
+            return seconds;
         }
     }
 }

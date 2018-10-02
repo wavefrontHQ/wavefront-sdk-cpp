@@ -6,6 +6,7 @@
 #include "common/Constants.h"
 #include <boost/algorithm/string/predicate.hpp>
 
+
 namespace wavefront {
 
     WavefrontDirectIngestionClient::WavefrontDirectIngestionClient(WavefrontDirectIngestionClient::Builder *builder)
@@ -132,7 +133,6 @@ namespace wavefront {
         while (is_running) {
             std::this_thread::sleep_for(std::chrono::seconds(flushIntervalSeconds));
             flush();
-            std::cout << "done flush()" << std::endl;
         }
     }
 

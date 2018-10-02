@@ -1,4 +1,4 @@
-# wavefront-cpp-sdk
+# wavefront-sdk-cpp
 This library provides support for sending metrics, histograms and opentracing spans to Wavefront via proxy or direct ingestion.
 
 ## Requirements
@@ -23,6 +23,9 @@ make -j 2
 
 # to run the example
 ./src/wavefront-sdk
+
+# to generate shared lib 
+make install
 ```
 
 ## Usage
