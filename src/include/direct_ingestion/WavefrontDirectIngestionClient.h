@@ -62,9 +62,9 @@ namespace wavefront {
                       std::list<boost::uuids::uuid> parents = {}, std::list<boost::uuids::uuid> followsFrom = {},
                       std::map<std::string, std::string> tags = {{}}) override;
 
-        int getFailureCount();
+        int getFailureCount() override;
 
-        void close();
+        void close() override;
 
         /**
          * start a seperate thread to flush queued content every @flushIntervalSecondsa

@@ -15,8 +15,9 @@ add_library(wavefront-sdk
         include/direct_ingestion/WavefrontDirectIngestionClient.h
         include/common/WavefrontSender.h
         include/common/Constants.h
+        include/common/Utils.h
         # cpr
-        $<TARGET_OBJECTS:cpr> )
+        $<TARGET_OBJECTS:cpr>)
 
 target_link_libraries(wavefront-sdk PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(wavefront-sdk PRIVATE ${CURL_LIBRARIES})
@@ -30,7 +31,7 @@ target_link_libraries(main PUBLIC wavefront-sdk Boost::iostreams)
 
 set_target_properties(main PROPERTIES OUTPUT_NAME wavefront-sdk)
 
-configure_file(../cmake/wavefront-sdk-lib.pc.in wavefront-sdk-lib.pc @ONLY)
+configure_file(../cmake/wavefront-sdk-lib.pc.in ../wavefront-sdk-lib.pc @ONLY)
 install(TARGETS wavefront-sdk EXPORT wavefront-sdk-targets
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

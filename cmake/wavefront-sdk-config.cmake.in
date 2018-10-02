@@ -1,7 +1,5 @@
 @PACKAGE_INIT@
 
-prefix=@PROJECT_NAME@
-
 set_and_check(wavefront-sdk_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
 
 include("${CMAKE_CURRENT_LIST_DIR}/wavefront-sdk-targets.cmake")

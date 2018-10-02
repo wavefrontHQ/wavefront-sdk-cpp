@@ -5,7 +5,7 @@
 #include <list>
 #include <set>
 #include <boost/uuid/uuid.hpp>
-#include "common/HistogramGranularity.h"
+#include "HistogramGranularity.h"
 
 namespace wavefront {
     /**
@@ -96,5 +96,13 @@ namespace wavefront {
         virtual void sendDeltaCounter(std::string &name, double value, const std::string &source,
                                       std::map<std::string, std::string> tags = {{}}) = 0;
 
+        /**
+        * Closes this stream and releases any system resources associated
+        * with it. If the stream is already closed then invoking this
+        * method has no effect.
+        */
+        virtual void close() = 0;
+
+        virtual int getFailureCount() = 0;
     };
 }

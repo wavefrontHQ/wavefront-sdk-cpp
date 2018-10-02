@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mutex>
-#include "common/Socket.h"
+#include "../common/Socket.h"
 
 namespace wavefront {
     /**

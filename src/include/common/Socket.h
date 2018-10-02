@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/SocketException.h"
+#include "SocketException.h"
 #include <netinet/in.h>      // For sockaddr_in
 #include <sys/socket.h>      // For socket(), connect(), send(), and recv()
 

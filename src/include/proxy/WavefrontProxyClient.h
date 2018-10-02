@@ -1,7 +1,7 @@
 #pragma once
 
-#include "proxy/ProxyConnectionHandler.h"
-#include "common/WavefrontSender.h"
+#include "ProxyConnectionHandler.h"
+#include "../common/WavefrontSender.h"
 
 namespace wavefront {
     /**
@@ -57,9 +57,9 @@ namespace wavefront {
                       std::map<std::string, std::string> tags = {{}}) override;
 
 
-        int getFailureCount();
+        int getFailureCount() override;
 
-        void close();
+        void close() override;
 
     private:
         WavefrontProxyClient(Builder *builder);
