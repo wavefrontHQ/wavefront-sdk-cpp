@@ -7,22 +7,26 @@
 
 namespace wavefront {
     WavefrontProxyClient::WavefrontProxyClient(WavefrontProxyClient::Builder *builder) {
-        if (builder->distributionPort != 0) {
-            distributionHandler = std::unique_ptr<ProxyConnectionHandler>(
-                    new ProxyConnectionHandler(builder->hostName, builder->distributionPort));
-            distributionHandler->connect();
-        }
+        try {
+            if (builder->distributionPort != 0) {
+                distributionHandler = std::unique_ptr<ProxyConnectionHandler>(
+                        new ProxyConnectionHandler(builder->hostName, builder->distributionPort));
+                distributionHandler->connect();
+            }
 
-        if (builder->metricsPort != 0) {
-            metricHandler = std::unique_ptr<ProxyConnectionHandler>(
-                    new ProxyConnectionHandler(builder->hostName, builder->metricsPort));
-            metricHandler->connect();
-        }
+            if (builder->metricsPort != 0) {
+                metricHandler = std::unique_ptr<ProxyConnectionHandler>(
+                        new ProxyConnectionHandler(builder->hostName, builder->metricsPort));
+                metricHandler->connect();
+            }
 
-        if (builder->tracingPort != 0) {
-            tracingHandler = std::unique_ptr<ProxyConnectionHandler>(
-                    new ProxyConnectionHandler(builder->hostName, builder->tracingPort));
-            tracingHandler->connect();
+            if (builder->tracingPort != 0) {
+                tracingHandler = std::unique_ptr<ProxyConnectionHandler>(
+                        new ProxyConnectionHandler(builder->hostName, builder->tracingPort));
+                tracingHandler->connect();
+            }
+        } catch (SocketException &e) {
+            std::cerr << e.what() << std::endl;
         }
     }
 
@@ -47,7 +51,7 @@ namespace wavefront {
         if (metricHandler != nullptr) {
             try {
                 metricHandler->close();
-            } catch (SocketException e) {
+            } catch (SocketException &e) {
                 metricHandler->incrementFailureCount();
                 std::cerr << e.what() << std::endl;
             }
@@ -56,7 +60,7 @@ namespace wavefront {
         if (distributionHandler != nullptr) {
             try {
                 distributionHandler->close();
-            } catch (SocketException e) {
+            } catch (SocketException &e) {
                 distributionHandler->incrementFailureCount();
                 std::cerr << e.what() << std::endl;
             }
@@ -65,7 +69,7 @@ namespace wavefront {
         if (tracingHandler != nullptr) {
             try {
                 tracingHandler->close();
-            } catch (SocketException e) {
+            } catch (SocketException &e) {
                 tracingHandler->incrementFailureCount();
                 std::cerr << e.what() << std::endl;
             }
@@ -81,10 +85,10 @@ namespace wavefront {
             std::string lineData = Serializer::metricsToLineData(name, value, timestamp,
                                                                  (source.empty() ? defaultSource : source), tags);
             metricHandler->sendData(lineData);
-        } catch (SocketException e) {
+        } catch (SocketException &e) {
             metricHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
-        } catch (std::invalid_argument e) {
+        } catch (std::invalid_argument &e) {
             metricHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
         }
@@ -108,10 +112,10 @@ namespace wavefront {
             std::string lineData = Serializer::histogramToLineData(name, centroids, histogramGranularities, timestamp,
                                                                    (source.empty() ? defaultSource : source), tags);
             distributionHandler->sendData(lineData);
-        } catch (SocketException e) {
+        } catch (SocketException &e) {
             distributionHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
-        } catch (std::invalid_argument e) {
+        } catch (std::invalid_argument &e) {
             distributionHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
         }
@@ -131,10 +135,10 @@ namespace wavefront {
                                                               (source.empty() ? defaultSource : source), parents,
                                                               followsFrom, tags);
             tracingHandler->sendData(lineData);
-        } catch (SocketException e) {
+        } catch (SocketException &e) {
             tracingHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
-        } catch (std::invalid_argument e) {
+        } catch (std::invalid_argument &e) {
             tracingHandler->incrementFailureCount();
             std::cerr << e.what() << std::endl;
         }

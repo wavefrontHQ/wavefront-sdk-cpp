@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
 
     std::string wavefrontServer = argv[1];
     std::string token = argv[2];
-    std::string proxyHost = argc < 4 ? "" : argv[3];
+    std::string proxyHost = argv[3];
     std::string metricsPort = argc < 5 ? "" : argv[4];
     std::string distributionPort = argc < 6 ? "" : argv[5];
     std::string tracingPort = argc < 7 ? "" : argv[6];

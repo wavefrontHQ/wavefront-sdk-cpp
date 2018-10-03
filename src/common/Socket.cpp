@@ -98,7 +98,9 @@ namespace wavefront {
 
     void Socket::close() throw(SocketException) {
         if (sockDesc != -1) {
-            ::close(sockDesc);
+            if (::close(sockDesc) < 0) {
+                throw SocketException("Close failed (close())", true);
+            }
             sockDesc = -1;
         }
     }

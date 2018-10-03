@@ -25,7 +25,7 @@ namespace wavefront {
         * @param lineData line data in a WavefrontProxyClient supported format
         * @throws Exception If there was failure sending the data
         */
-        void sendData(std::string &lineData) throw(SocketException);
+        void sendData(std::string &lineData);
 
         inline int getFailureCount() {
             return failures.load();

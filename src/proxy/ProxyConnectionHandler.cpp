@@ -30,13 +30,9 @@ namespace wavefront {
         socket->connect(hostName, port);
     }
 
-    void ProxyConnectionHandler::sendData(std::string &lineData) throw(SocketException) {
+    void ProxyConnectionHandler::sendData(std::string &lineData) {
         std::lock_guard<std::mutex> lock{mutex};
-        try {
-            socket->send(lineData.c_str(), lineData.length());
-        } catch (SocketException e) {
-            throw e;
-        }
+        socket->send(lineData.c_str(), lineData.length());
     }
 
 
