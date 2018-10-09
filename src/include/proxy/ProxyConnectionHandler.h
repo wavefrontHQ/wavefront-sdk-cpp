@@ -21,6 +21,7 @@ namespace wavefront {
 
         /**
         * Sends the given data to the WavefrontProxyClient proxy.
+        * one improvement we have is to reset socket before throwing SocketException
         *
         * @param lineData line data in a WavefrontProxyClient supported format
         * @throws Exception If there was failure sending the data
@@ -36,7 +37,11 @@ namespace wavefront {
         }
 
         inline const std::string getDefaultHost() {
-            return socket->getLocalAddress();
+            return hostName;
+        }
+
+        inline const unsigned short getDefaultPort() {
+            return port;
         }
 
     private:

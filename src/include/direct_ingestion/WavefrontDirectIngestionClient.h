@@ -41,7 +41,7 @@ namespace wavefront {
             std::string token;
 
             // Optional parameters
-            int maxQueueSize = 10;
+            int maxQueueSize = 50000;
             int batchSize = 10000;
             int flushIntervalSeconds = 2;
         };

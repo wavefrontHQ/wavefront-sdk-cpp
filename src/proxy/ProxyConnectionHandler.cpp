@@ -16,6 +16,8 @@ namespace wavefront {
     }
 
     void ProxyConnectionHandler::close() {
+        std::lock_guard<std::mutex> lock{mutex};
+
         if (socket != nullptr) {
             socket->close();
             socket.reset(nullptr);
@@ -26,13 +28,26 @@ namespace wavefront {
         std::lock_guard<std::mutex> lock{mutex};
 
         if (socket == nullptr)
-            throw new SocketException("can't connect to a closed socket");
+            throw SocketException("can't connect to a closed socket");
         socket->connect(hostName, port);
     }
 
     void ProxyConnectionHandler::sendData(std::string &lineData) {
-        std::lock_guard<std::mutex> lock{mutex};
-        socket->send(lineData.c_str(), lineData.length());
+        mutex.lock();
+        try {
+            socket->send(lineData.c_str(), lineData.length());
+            mutex.unlock();
+        } catch (SocketException e) {
+            mutex.unlock();
+            try {
+                // try to close socket first and then reconnect
+                close();
+                socket.reset(new CommunicatingSocket());
+                connect();
+            } catch (SocketException &e) {
+                throw e;
+            }
+        }
     }
 
 
