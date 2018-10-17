@@ -15,7 +15,7 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 find_package(Threads)
 
 # ---[ Dependency:: find Boost
-find_package(Boost 1.52 REQUIRED COMPONENTS iostreams filesystem system log)
+find_package(Boost 1.52 REQUIRED COMPONENTS iostreams filesystem system)
 include_directories(${Boost_INCLUDE_DIR})
 
 # ---[ Dependency:: find cpr/curl
