@@ -167,10 +167,10 @@ wavefrontSender->sendDistribution("request.latency", centroids, histogramGranula
 //            spanId=0313bafe-9457-11e8-9eb6-529269fb1459
 //            parent=2f64e538-9457-11e8-9eb6-529269fb1459
 //            application=Wavefront http.method=GET
-//            1533529977 343500"
+//            1552949776000 343"
 // 
 boost::uuids::string_generator string_gen;
-wavefrontSender->sendSpan("getAllUsers",1533529977L, 343500L, "localhost",
+wavefrontSender->sendSpan("getAllUsers",1552949776000L, 343L, "localhost",
       string_gen("7b3bf470-9456-11e8-9eb6-529269fb1459"),
       string_gen("0313bafe-9457-11e8-9eb6-529269fb1459"),
       {string_gen("2f64e538-9457-11e8-9eb6-529269fb1459")}, 
