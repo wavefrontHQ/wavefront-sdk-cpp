@@ -98,11 +98,11 @@ WavefrontProxyClient::Builder proxyBuilder(<host>);
 
 // Configure the builder with proxy listening ports:
 //   the default listener port (2878) for sending metrics to
-//   the recommended port (40000) for sending histograms to
+//   the recommended port (2878) for sending histograms to
 //   the recommended port (30000) for sending trace data to
 // And then build the WavefrontProxyClient
 WavefrontProxyClient *wavefrontSender = proxyBuilder.setMetricsPort(2878).
-                                        setDistributionPort(40000).
+                                        setDistributionPort(2878).
                                         setTracingPort(30000).
                                         build();
 ```
