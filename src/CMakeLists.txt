@@ -16,8 +16,26 @@ set_target_properties(wavefront-sdk PROPERTIES VERSION ${PROJECT_VERSION})
 # --[ Main
 add_executable(main ${PROJECT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(main PUBLIC wavefront-sdk)
-
 set_target_properties(main PROPERTIES OUTPUT_NAME wavefront-sdk)
+
+include(ExternalProject)
+set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
+
+ExternalProject_Add(googletest
+GIT_REPOSITORY https://github.com/google/googletest
+GIT_TAG           master
+CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+)
+
+include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
+enable_testing()
+
+add_executable(HistogramTests ${PROJECT_SOURCE_DIR}/src/test/HistogramTest.cpp)
+add_dependencies(HistogramTests googletest)
+target_link_libraries(HistogramTests gtest gtest_main)
+add_test(Test HistogramTests)
+
 
 install(TARGETS wavefront-sdk EXPORT wavefront-sdk-targets
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
