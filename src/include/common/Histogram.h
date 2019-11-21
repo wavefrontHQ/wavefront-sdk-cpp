@@ -1,7 +1,7 @@
 /*
  * @Author: Sangtian Wang
  * @Date: 2019-11-13 21:28:48
- * @LastEditTime: 2019-11-15 11:44:52
+ * @LastEditTime: 2019-11-21 11:31:30
  * @FilePath: /wavefront-sdk-cpp/src/include/common/Histogram.h
  */
 
@@ -311,6 +311,8 @@ class WavefrontHistogram {
     Snapshot GetSnapshot() {
         UpdatePriorBin();
         tdigest::TDigest new_digest(accuracy);
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 new_digest.merge(&d.second);
@@ -323,6 +325,8 @@ class WavefrontHistogram {
     int GetCount() {
         UpdatePriorBin();
         int count = 0;
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 d.second.quantile(-1); // trigger tdigest to process()
@@ -336,6 +340,8 @@ class WavefrontHistogram {
     double GetSum() {
         UpdatePriorBin();
         double sum = 0;
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 d.second.quantile(-1); // trigger tdigest to process()
@@ -350,6 +356,8 @@ class WavefrontHistogram {
     double GetMax() {
         UpdatePriorBin();
         double max_val = DBL_MIN;
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 max_val = std::max(d.second.quantile(1), max_val);
@@ -363,6 +371,8 @@ class WavefrontHistogram {
     double GetMin() {
         UpdatePriorBin();
         double min_val = DBL_MAX;
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 min_val = std::min(d.second.quantile(0), min_val);
@@ -377,6 +387,7 @@ class WavefrontHistogram {
         UpdatePriorBin();
         double total_val = 0;
         double total_weight = 0;
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             for (auto &d : tmp.per_thread_dist) {
                 d.second.quantile(-1); // trigger tdigest to process()
@@ -393,6 +404,8 @@ class WavefrontHistogram {
         double mean = GetMean();
         double weight = GetCount();
         double variance = 0;
+
+        std::lock_guard<std::mutex> lock(mtx_);
         for (ThreadMinBin &tmp : prior_minute_bins_) {
             std::vector<std::vector<tdigest::Centroid>> tmp_centroids =
                 tmp.GetCentroids();
