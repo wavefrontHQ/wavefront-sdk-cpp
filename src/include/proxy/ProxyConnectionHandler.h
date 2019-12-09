@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+#include <memory>
 #include <mutex>
 #include "../common/Socket.h"
 
