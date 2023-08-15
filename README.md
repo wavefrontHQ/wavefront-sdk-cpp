@@ -1,3 +1,7 @@
+> **Warning**
+>
+> VMware has ended active development of this project. this repository will no longer be updated.
+
 # wavefront-sdk-cpp
 Wavefront by VMware SDK for C++ is the core library for sending metrics, histograms and trace data from your C++ application to Wavefront using either a Wavefront proxy or direct ingestion.
 
